@@ -1,0 +1,1734 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>EE Fieldnotes — Electrical Engineering, Made Visual</title>
+
+  <meta
+    name="description"
+    content="Learn electrical engineering through visual explanations, interactive experiments, and guided waveform explorations."
+  >
+
+  <style>
+    /* =========================
+       1. DESIGN SYSTEM
+    ========================= */
+
+    :root {
+      --blue: #3568c0;
+      --blue-dark: #244d96;
+      --blue-light: #eaf1fc;
+
+      --background: #ffffff;
+      --surface: #f7f8fa;
+      --border: #e7e9ee;
+
+      --text: #20242b;
+      --muted: #747b88;
+
+      --radius: 16px;
+      --container: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(var(--container), calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .section {
+      padding: 88px 0;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+    }
+
+    .section-heading {
+      max-width: 650px;
+      margin-bottom: 36px;
+    }
+
+    .section-heading h2 {
+      margin: 12px 0;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.2;
+      letter-spacing: -1.4px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      max-width: 570px;
+      margin: 0;
+    }
+
+    /* =========================
+       2. NAVIGATION
+    ========================= */
+
+    .navbar {
+      height: 76px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.94);
+    }
+
+    .nav-inner {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-weight: 750;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: var(--blue);
+      border-radius: 10px;
+      font-size: 19px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .nav-links a:hover {
+      color: var(--blue);
+    }
+
+    .nav-cta {
+      padding: 10px 16px;
+      background: var(--blue);
+      color: white;
+      border-radius: 9px;
+      font-weight: 600;
+    }
+
+    .nav-cta:hover {
+      background: var(--blue-dark);
+    }
+
+    /* =========================
+       3. HERO
+    ========================= */
+
+    .hero {
+      padding: 82px 0 72px;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 0.95fr;
+      align-items: center;
+      gap: 64px;
+    }
+
+    .hero-copy h1 {
+      max-width: 610px;
+      margin: 18px 0;
+      font-size: clamp(38px, 5.5vw, 66px);
+      line-height: 1.08;
+      letter-spacing: -3px;
+    }
+
+    .hero-copy h1 span {
+      color: var(--blue);
+    }
+
+    .hero-copy > p {
+      max-width: 500px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 12px 18px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: white;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 650;
+      transition: 0.2s ease;
+    }
+
+    .button-primary {
+      color: white;
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .button-primary:hover {
+      background: var(--blue-dark);
+      border-color: var(--blue-dark);
+      transform: translateY(-1px);
+    }
+
+    .button-secondary:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .hero-note {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* =========================
+       4. WAVEFORM EXPLORER
+    ========================= */
+
+    .demo-card {
+      position: relative;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: white;
+      box-shadow: 0 18px 60px rgba(28, 52, 91, 0.07);
+    }
+
+    .demo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .demo-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .demo-label {
+      color: var(--blue);
+      background: var(--blue-light);
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: 0.5px;
+    }
+
+    .wave-container {
+      padding: 8px 0;
+      background: #f8faff;
+      border: 1px solid #edf2fa;
+      border-radius: 12px;
+    }
+
+    #waveform {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .wave-grid {
+      stroke: #e4eaf4;
+      stroke-width: 1;
+    }
+
+    .wave-axis {
+      stroke: #aab7ca;
+      stroke-width: 1.2;
+    }
+
+    .wave-line {
+      fill: none;
+      stroke: var(--blue);
+      stroke-width: 2.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .wave-input {
+      fill: none;
+      stroke: #aab5c5;
+      stroke-width: 1.5;
+      stroke-dasharray: 4 5;
+    }
+
+    .wave-angle {
+      stroke: #d97835;
+      stroke-width: 1.5;
+      stroke-dasharray: 3 3;
+    }
+
+    .demo-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin: 14px 0 22px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--blue);
+    }
+
+    .legend-dot.input {
+      background: #aab5c5;
+    }
+
+    .legend-dot.angle {
+      background: #d97835;
+    }
+
+    .control-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 9px;
+      font-size: 13px;
+    }
+
+    .control-value {
+      color: var(--blue);
+      font-weight: 750;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .demo-controls {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 22px;
+    }
+
+    .demo-controls button {
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: white;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .demo-controls button:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .demo-controls .play-button {
+      color: white;
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .demo-controls .play-button:hover {
+      color: white;
+      background: var(--blue-dark);
+    }
+
+    .step-info {
+      min-height: 48px;
+      margin-top: 18px;
+      padding: 12px;
+      background: var(--surface);
+      border-radius: 9px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .step-info strong {
+      color: var(--text);
+    }
+
+    /* =========================
+       5. MODULES
+    ========================= */
+
+    .modules-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .module-card {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: white;
+      transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .module-card.available {
+      border-color: #cbdaf1;
+    }
+
+    .module-card:hover {
+      transform: translateY(-4px);
+      border-color: #b7cbea;
+      box-shadow: 0 12px 30px rgba(28, 52, 91, 0.06);
+    }
+
+    .module-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .module-number {
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: 1px;
+    }
+
+    .status {
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #f0f1f4;
+      color: #747b88;
+      font-size: 10px;
+      font-weight: 650;
+    }
+
+    .status.available {
+      background: var(--blue-light);
+      color: var(--blue);
+    }
+
+    .module-art {
+      display: grid;
+      place-items: center;
+      height: 125px;
+      margin: 18px 0;
+      overflow: hidden;
+      border-radius: 11px;
+      background: #f5f8fd;
+    }
+
+    .module-art svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .module-card h3 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.4;
+      letter-spacing: -0.3px;
+    }
+
+    .module-card p {
+      margin: 10px 0 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .module-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: auto;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .module-link.disabled {
+      color: #9aa0aa;
+      cursor: default;
+    }
+
+    /* =========================
+       6. LEARNING FEATURES
+    ========================= */
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .feature {
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .feature-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      margin-bottom: 20px;
+      border-radius: 11px;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .feature h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    /* =========================
+       7. FOOTER
+    ========================= */
+
+    footer {
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .footer-inner p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-brand {
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    /* =========================
+       8. RESPONSIVE DESIGN
+    ========================= */
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 42px;
+      }
+
+      .hero-copy {
+        max-width: 700px;
+      }
+
+      .demo-card {
+        max-width: 650px;
+      }
+
+      .module-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .container {
+        width: calc(100% - 32px);
+      }
+
+      .section {
+        padding: 62px 0;
+      }
+
+      .navbar {
+        height: 66px;
+      }
+
+      .nav-links {
+        gap: 14px;
+        font-size: 12px;
+      }
+
+      .nav-links .nav-cta {
+        padding: 8px 10px;
+      }
+
+      .brand {
+        font-size: 15px;
+        gap: 8px;
+      }
+
+      .brand-mark {
+        width: 32px;
+        height: 32px;
+      }
+
+      .hero {
+        padding: 58px 0;
+      }
+
+      .hero-copy h1 {
+        letter-spacing: -1.8px;
+      }
+
+      .hero-copy > p {
+        font-size: 15px;
+      }
+
+      .demo-card {
+        padding: 17px;
+      }
+
+      .module-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .module-art {
+        height: 145px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       NAVIGATION
+  ========================= -->
+
+  <header class="navbar">
+    <div class="container nav-inner">
+
+      <a href="#" class="brand">
+        <span class="brand-mark">∿</span>
+        <span>EE Fieldnotes</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#modules">Modules</a>
+        <a href="#learning">About</a>
+        <a href="#modules" class="nav-cta">Start learning ↗</a>
+      </nav>
+
+    </div>
+  </header>
+
+
+  <main>
+
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <section class="hero">
+      <div class="container hero-grid">
+
+        <div class="hero-copy">
+
+          <div class="eyebrow">
+            Electrical engineering · Visual learning
+          </div>
+
+          <h1>
+            Understand the circuit.<br>
+            See the <span>waveform.</span>
+          </h1>
+
+          <p>
+            Electrical engineering, explained visually.
+            Explore circuits, experiment with parameters, and
+            understand the ideas behind the equations.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#modules" class="button button-primary">
+              Explore modules →
+            </a>
+
+            <a href="#experiment" class="button button-secondary">
+              Try an experiment
+            </a>
+          </div>
+
+          <div class="hero-note">
+            An independent student learning project · Advanced Power Electronics
+          </div>
+
+        </div>
+
+
+        <!-- INTERACTIVE DEMO -->
+
+        <div class="demo-card" id="experiment">
+
+          <div class="demo-header">
+            <div class="demo-title">
+              Waveform explorer
+            </div>
+
+            <div class="demo-label">
+              INTERACTIVE
+            </div>
+          </div>
+
+          <div class="wave-container">
+
+            <svg
+              id="waveform"
+              viewBox="0 0 340 180"
+              role="img"
+              aria-label="Illustrative controlled rectifier output waveform"
+            >
+
+              <g class="wave-grid">
+                <line x1="30" y1="20" x2="30" y2="155"/>
+                <line x1="100" y1="20" x2="100" y2="155"/>
+                <line x1="170" y1="20" x2="170" y2="155"/>
+                <line x1="240" y1="20" x2="240" y2="155"/>
+                <line x1="310" y1="20" x2="310" y2="155"/>
+
+                <line x1="20" y1="40" x2="320" y2="40"/>
+                <line x1="20" y1="90" x2="320" y2="90"/>
+                <line x1="20" y1="140" x2="320" y2="140"/>
+              </g>
+
+              <line
+                class="wave-axis"
+                x1="20"
+                y1="90"
+                x2="320"
+                y2="90"
+              />
+
+              <path
+                id="inputWave"
+                class="wave-input"
+                d=""
+              />
+
+              <path
+                id="outputWave"
+                class="wave-line"
+                d=""
+              />
+
+              <line
+                id="angleMarker"
+                class="wave-angle"
+                x1="20"
+                y1="20"
+                x2="20"
+                y2="155"
+              />
+
+              <text
+                id="angleText"
+                x="25"
+                y="15"
+                font-size="10"
+                fill="#d97835"
+              >
+                α
+              </text>
+
+              <text
+                x="315"
+                y="170"
+                font-size="10"
+                fill="#7b8798"
+              >
+                ωt
+              </text>
+
+            </svg>
+
+          </div>
+
+
+          <div class="demo-legend">
+
+            <div class="legend-item">
+              <span class="legend-dot input"></span>
+              Input voltage
+            </div>
+
+            <div class="legend-item">
+              <span class="legend-dot"></span>
+              Output illustration
+            </div>
+
+            <div class="legend-item">
+              <span class="legend-dot angle"></span>
+              Firing angle
+            </div>
+
+          </div>
+
+
+          <div class="control-row">
+
+            <label for="angleSlider">
+              Firing angle α
+            </label>
+
+            <output
+              id="angleValue"
+              class="control-value"
+              for="angleSlider"
+            >
+              60°
+            </output>
+
+          </div>
+
+          <input
+            type="range"
+            id="angleSlider"
+    min="0"
+    max="150"
+    value="60"
+    step="5"
+    aria-label="Adjust firing angle"
+          >
+
+          <div class="range-labels">
+            <span>0°</span>
+            <span>75°</span>
+            <span>150°</span>
+          </div>
+
+
+          <div class="demo-controls">
+
+            <button
+              id="previousStep"
+              type="button"
+            >
+              ← Previous
+            </button>
+
+            <button
+              id="playButton"
+              class="play-button"
+              type="button"
+            >
+              ▶ Play
+            </button>
+
+            <button
+              id="nextStep"
+              type="button"
+            >
+              Next →
+            </button>
+
+          </div>
+
+
+          <div
+            id="stepInfo"
+            class="step-info"
+            aria-live="polite"
+          >
+            <strong>Step 1:</strong>
+            Observe the input voltage before conduction begins.
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- =========================
+         MODULES
+    ========================= -->
+
+    <section class="section modules-section" id="modules">
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div class="eyebrow">
+            The learning path
+          </div>
+
+          <h2>
+            Explore Advanced Power Electronics
+          </h2>
+
+          <p>
+            From PWM rectifiers to active power filters,
+            explore the concepts that shape modern power
+            conversion through visual explanations.
+          </p>
+
+        </div>
+
+
+        <div class="module-grid">
+
+
+          <!-- MODULE 1 -->
+
+          <article class="module-card available">
+
+            <div class="module-top">
+              <span class="module-number">MODULE 01</span>
+              <span class="status available">In progress</span>
+            </div>
+
+            <div class="module-art">
+
+              <svg viewBox="0 0 300 130" aria-hidden="true">
+
+                <g stroke="#dce5f2" stroke-width="1">
+                  <line x1="20" y1="30" x2="280" y2="30"/>
+                  <line x1="20" y1="65" x2="280" y2="65"/>
+                  <line x1="20" y1="100" x2="280" y2="100"/>
+                </g>
+
+                <path
+                  d="M20 65 Q55 10 90 65 T160 65 T230 65 T280 65"
+                  fill="none"
+                  stroke="#a9b6c9"
+                  stroke-width="2"
+                  stroke-dasharray="4 4"
+                />
+
+                <path
+                  d="M20 65 L55 65 Q75 25 90 25 L90 65 L125 65 Q145 105 160 105 L160 65 L195 65 Q215 25 230 25 L230 65 L265 65"
+                  fill="none"
+                  stroke="#3568c0"
+                  stroke-width="2.5"
+                  stroke-linejoin="round"
+                />
+
+              </svg>
+
+            </div>
+
+            <h3>PWM Rectifiers & Space Vector PWM</h3>
+
+            <p>
+              Explore rectifier operation, pulse-width modulation,
+              and space-vector switching.
+            </p>
+
+            <a href="#experiment" class="module-link">
+              Explore module →
+            </a>
+
+          </article>
+
+
+          <!-- MODULE 2 -->
+
+          <article class="module-card">
+
+            <div class="module-top">
+              <span class="module-number">MODULE 02</span>
+              <span class="status">Coming soon</span>
+            </div>
+
+            <div class="module-art">
+
+              <svg viewBox="0 0 300 130" aria-hidden="true">
+
+                <g stroke="#dce5f2" stroke-width="1">
+                  <line x1="20" y1="30" x2="280" y2="30"/>
+                  <line x1="20" y1="65" x2="280" y2="65"/>
+                  <line x1="20" y1="100" x2="280" y2="100"/>
+                </g>
+
+                <path
+                  d="M20 100 H60 V65 H110 V30 H160 V65 H210 V100 H260"
+                  fill="none"
+                  stroke="#3568c0"
+                  stroke-width="3"
+                  stroke-linejoin="round"
+                />
+
+              </svg>
+
+            </div>
+
+            <h3>Multilevel Inverters</h3>
+
+            <p>
+              Discover inverter topologies and how multilevel
+              voltage waveforms are formed.
+            </p>
+
+            <span class="module-link disabled">
+              Coming soon
+            </span>
+
+          </article>
+
+
+          <!-- MODULE 3 -->
+
+          <article class="module-card">
+
+            <div class="module-top">
+              <span class="module-number">MODULE 03</span>
+              <span class="status">Coming soon</span>
+            </div>
+
+            <div class="module-art">
+
+              <svg viewBox="0 0 300 130" aria-hidden="true">
+
+                <g stroke="#dce5f2" stroke-width="1">
+                  <line x1="20" y1="30" x2="280" y2="30"/>
+                  <line x1="20" y1="65" x2="280" y2="65"/>
+                  <line x1="20" y1="100" x2="280" y2="100"/>
+                </g>
+
+                <path
+                  d="M20 65
+                     C35 15 50 15 65 65
+                     S95 115 110 65
+                     S140 15 155 65
+                     S185 115 200 65
+                     S230 15 245 65
+                     S275 115 280 65"
+                  fill="none"
+                  stroke="#3568c0"
+                  stroke-width="2.5"
+                />
+
+              </svg>
+
+            </div>
+
+            <h3>Soft Switching & Resonant Converters</h3>
+
+            <p>
+              Understand resonant operation and switching
+              techniques that reduce switching losses.
+            </p>
+
+            <span class="module-link disabled">
+              Coming soon
+            </span>
+
+          </article>
+
+
+          <!-- MODULE 4 -->
+
+          <article class="module-card">
+
+            <div class="module-top">
+              <span class="module-number">MODULE 04</span>
+              <span class="status">Coming soon</span>
+            </div>
+
+            <div class="module-art">
+
+              <svg viewBox="0 0 300 130" aria-hidden="true">
+
+                <g
+                  stroke="#3568c0"
+                  stroke-width="2"
+                  fill="none"
+                  stroke-linejoin="round"
+                >
+
+                  <rect x="35" y="28" width="90" height="65" rx="5"/>
+
+                  <path d="M45 38 L115 38"/>
+                  <path d="M45 48 L115 48"/>
+                  <path d="M45 58 L115 58"/>
+                  <path d="M45 68 L115 68"/>
+                  <path d="M45 78 L115 78"/>
+
+                  <rect x="170" y="42" width="65" height="40" rx="5"/>
+
+                  <path d="M125 60 H170"/>
+                  <path d="M235 60 H260"/>
+
+                  <circle cx="265" cy="60" r="5"/>
+
+                </g>
+
+              </svg>
+
+            </div>
+
+            <h3>Photovoltaic Inverters</h3>
+
+            <p>
+              Explore grid-connected PV systems and the
+              role of inverters in solar power conversion.
+            </p>
+
+            <span class="module-link disabled">
+              Coming soon
+            </span>
+
+          </article>
+
+
+          <!-- MODULE 5A -->
+
+          <article class="module-card">
+
+            <div class="module-top">
+              <span class="module-number">MODULE 05A</span>
+              <span class="status">Coming soon</span>
+            </div>
+
+            <div class="module-art">
+
+              <svg viewBox="0 0 300 130" aria-hidden="true">
+
+                <g
+                  stroke="#3568c0"
+                  stroke-width="2.5"
+                  fill="none"
+                >
+
+                  <path d="M40 35 H260 V95 H40 Z"/>
+
+                  <path d="M40 35 L150 95"/>
+                  <path d="M260 35 L150 95"/>
+
+                  <circle cx="40" cy="35" r="4" fill="#3568c0"/>
+                  <circle cx="260" cy="35" r="4" fill="#3568c0"/>
+                  <circle cx="40" cy="95" r="4" fill="#3568c0"/>
+                  <circle cx="260" cy="95" r="4" fill="#3568c0"/>
+
+                  <circle cx="150" cy="65" r="6" fill="#3568c0"/>
+
+                </g>
+
+              </svg>
+
+            </div>
+
+            <h3>Z-Source Inverters</h3>
+
+            <p>
+              Explore the impedance network and its role
+              in Z-source inverter operation.
+            </p>
+
+            <span class="module-link disabled">
+              Coming soon
+            </span>
+
+          </article>
+
+
+          <!-- MODULE 5B -->
+
+          <article class="module-card">
+
+            <div class="module-top">
+              <span class="module-number">MODULE 05B</span>
+              <span class="status">Coming soon</span>
+            </div>
+
+            <div class="module-art">
+
+              <svg viewBox="0 0 300 130" aria-hidden="true">
+
+                <g
+                  stroke="#3568c0"
+                  stroke-width="2"
+                  fill="none"
+                  stroke-linecap="round"
+                >
+
+                  <path d="M30 30 H100"/>
+                  <path d="M30 65 H100"/>
+                  <path d="M30 100 H100"/>
+
+                  <path d="M200 30 H270"/>
+                  <path d="M200 65 H270"/>
+                  <path d="M200 100 H270"/>
+
+                  <path d="M100 30 L200 100"/>
+                  <path d="M100 65 L200 30"/>
+                  <path d="M100 100 L200 65"/>
+
+                </g>
+
+                <g fill="#3568c0">
+                  <circle cx="100" cy="30" r="4"/>
+                  <circle cx="100" cy="65" r="4"/>
+                  <circle cx="100" cy="100" r="4"/>
+                  <circle cx="200" cy="30" r="4"/>
+                  <circle cx="200" cy="65" r="4"/>
+                  <circle cx="200" cy="100" r="4"/>
+                </g>
+
+              </svg>
+
+            </div>
+
+            <h3>Matrix Converters</h3>
+
+            <p>
+              Understand direct AC-to-AC conversion and
+              matrix converter fundamentals.
+            </p>
+
+            <span class="module-link disabled">
+              Coming soon
+            </span>
+
+          </article>
+
+
+          <!-- MODULE 6 -->
+
+          <article class="module-card">
+
+            <div class="module-top">
+              <span class="module-number">MODULE 06</span>
+              <span class="status">Coming soon</span>
+            </div>
+
+            <div class="module-art">
+
+              <svg viewBox="0 0 300 130" aria-hidden="true">
+
+                <g stroke="#dce5f2" stroke-width="1">
+                  <line x1="20" y1="30" x2="280" y2="30"/>
+                  <line x1="20" y1="65" x2="280" y2="65"/>
+                  <line x1="20" y1="100" x2="280" y2="100"/>
+                </g>
+
+                <path
+                  d="M20 65
+                     C40 15 60 15 80 65
+                     S120 115 140 65
+                     S180 15 200 65
+                     S240 115 260 65"
+                  fill="none"
+                  stroke="#aab5c5"
+                  stroke-width="2"
+                  stroke-dasharray="4 4"
+                />
+
+                <path
+                  d="M20 65 L55 65 L80 65
+                     L110 65 L140 65
+                     L170 65 L200 65
+                     L230 65 L260 65"
+                  fill="none"
+                  stroke="#3568c0"
+                  stroke-width="2.5"
+                />
+
+              </svg>
+
+            </div>
+
+            <h3>Active Power Filters & Grid-Connected Inverters</h3>
+
+            <p>
+              Explore grid-connected inverter operation,
+              harmonics, and active power filtering.
+            </p>
+
+            <a href="#experiment" class="module-link">
+              Explore demo →
+            </a>
+
+          </article>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         LEARNING FEATURES
+    ========================= -->
+
+    <section class="section" id="learning">
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div class="eyebrow">
+            A different way to learn
+          </div>
+
+          <h2>
+            Learn by seeing, not just memorizing.
+          </h2>
+
+          <p>
+            Engineering concepts become easier to understand
+            when you can connect equations with what
+            actually happens in a circuit.
+          </p>
+
+        </div>
+
+
+        <div class="features-grid">
+
+          <article class="feature">
+
+            <div class="feature-icon">
+              ∿
+            </div>
+
+            <h3>Visual explanations</h3>
+
+            <p>
+              Follow circuit operation through original
+              diagrams, waveforms, and step-by-step
+              explanations.
+            </p>
+
+          </article>
+
+
+          <article class="feature">
+
+            <div class="feature-icon">
+              ↔
+            </div>
+
+            <h3>Interactive experiments</h3>
+
+            <p>
+              Change parameters, observe what happens,
+              and build intuition through experimentation.
+            </p>
+
+          </article>
+
+
+          <article class="feature">
+
+            <div class="feature-icon">
+              ∑
+            </div>
+
+            <h3>Understand the equations</h3>
+
+            <p>
+              Connect mathematical expressions with
+              the physical behavior of electrical systems.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       FOOTER
+  ========================= -->
+
+  <footer>
+
+    <div class="container footer-inner">
+
+      <div class="footer-brand">
+        EE Fieldnotes
+      </div>
+
+      <p>
+        An independent student learning project.
+        Built to make electrical engineering more visual.
+      </p>
+
+      <p>
+        © 2026 EE Fieldnotes
+      </p>
+
+    </div>
+
+  </footer>
+
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================= -->
+
+  <script>
+
+    // ---------------------------------
+    // 1. GET HTML ELEMENTS
+    // ---------------------------------
+
+    const angleSlider = document.getElementById("angleSlider");
+    const angleValue = document.getElementById("angleValue");
+
+    const inputWave = document.getElementById("inputWave");
+    const outputWave = document.getElementById("outputWave");
+
+    const angleMarker = document.getElementById("angleMarker");
+    const angleText = document.getElementById("angleText");
+
+    const playButton = document.getElementById("playButton");
+
+    const previousButton = document.getElementById("previousStep");
+    const nextButton = document.getElementById("nextStep");
+
+    const stepInfo = document.getElementById("stepInfo");
+
+
+    // ---------------------------------
+    // 2. ANIMATION STATE
+    // ---------------------------------
+
+    let currentStep = 0;
+    let animationTimer = null;
+
+    const steps = [
+
+      {
+        title: "Observe the input",
+        description:
+          "The dashed curve represents the sinusoidal input voltage."
+      },
+
+      {
+        title: "Firing angle",
+        description:
+          "The firing angle α determines when the controlled device begins conducting in this illustrative model."
+      },
+
+      {
+        title: "Output waveform",
+        description:
+          "Observe how changing α changes the illustrated output waveform."
+      },
+
+      {
+        title: "Explore",
+        description:
+          "Move the slider and compare how different firing angles affect the waveform."
+      }
+
+    ];
+
+
+    // ---------------------------------
+    // 3. GENERATE THE INPUT SINE WAVE
+    // ---------------------------------
+
+    function generateInputWave() {
+
+      let path = "";
+
+      for (let x = 20; x <= 320; x += 2) {
+
+        const angle = ((x - 20) / 300) * Math.PI * 2;
+
+        const y = 90 - 55 * Math.sin(angle);
+
+        if (x === 20) {
+
+          path += `M ${x} ${y}`;
+
+        } else {
+
+          path += ` L ${x} ${y}`;
+
+        }
+
+      }
+
+      inputWave.setAttribute("d", path);
+
+    }
+
+
+    // ---------------------------------
+    // 4. GENERATE OUTPUT WAVEFORM
+    // ---------------------------------
+
+    function generateOutputWave(alpha) {
+
+      let path = "";
+
+      const alphaRadians = alpha * Math.PI / 180;
+
+      for (let x = 20; x <= 320; x += 2) {
+
+        const angle = ((x - 20) / 300) * Math.PI * 2;
+
+        const localAngle = angle % Math.PI;
+
+        const conducting = localAngle >= alphaRadians;
+
+        let y = 90;
+
+        if (conducting) {
+
+          y = 90 - 55 * Math.abs(Math.sin(angle));
+
+        }
+
+        if (x === 20) {
+
+          path += `M ${x} ${y}`;
+
+        } else {
+
+          path += ` L ${x} ${y}`;
+
+        }
+
+      }
+
+      outputWave.setAttribute("d", path);
+
+    }
+
+
+    // ---------------------------------
+    // 5. UPDATE FIRING ANGLE
+    // ---------------------------------
+
+    function updateAngle() {
+
+      const alpha = Number(angleSlider.value);
+
+      angleValue.textContent = `${alpha}°`;
+
+      const markerX = 20 + (alpha / 180) * 150;
+
+      angleMarker.setAttribute("x1", markerX);
+      angleMarker.setAttribute("x2", markerX);
+
+      angleText.setAttribute("x", markerX + 5);
+
+      angleText.textContent = `α = ${alpha}°`;
+
+      generateOutputWave(alpha);
+
+    }
+
+
+    // ---------------------------------
+    // 6. UPDATE GUIDED ANIMATION
+    // ---------------------------------
+
+    function updateStep() {
+
+      const step = steps[currentStep];
+
+      stepInfo.innerHTML =
+        `<strong>Step ${currentStep + 1}: ${step.title}.</strong> ` +
+        step.description;
+
+    }
+
+
+    function next() {
+
+      currentStep = (currentStep + 1) % steps.length;
+
+      updateStep();
+
+    }
+
+
+    function previous() {
+
+      currentStep =
+        (currentStep - 1 + steps.length) % steps.length;
+
+      updateStep();
+
+    }
+
+
+    // ---------------------------------
+    // 7. PLAY / PAUSE
+    // ---------------------------------
+
+    function toggleAnimation() {
+
+      if (animationTimer) {
+
+        clearInterval(animationTimer);
+
+        animationTimer = null;
+
+        playButton.textContent = "▶ Play";
+
+        return;
+
+      }
+
+      playButton.textContent = "Ⅱ Pause";
+
+      animationTimer = setInterval(() => {
+
+        next();
+
+      }, 2200);
+
+    }
+
+
+    // ---------------------------------
+    // 8. EVENT LISTENERS
+    // ---------------------------------
+
+    angleSlider.addEventListener("input", updateAngle);
+
+    nextButton.addEventListener("click", next);
+
+    previousButton.addEventListener("click", previous);
+
+    playButton.addEventListener("click", toggleAnimation);
+
+
+    // ---------------------------------
+    // 9. INITIALIZE THE DEMO
+    // ---------------------------------
+
+    generateInputWave();
+
+    updateAngle();
+
+    updateStep();
+
+  </script>
+
+</body>
+</html>
